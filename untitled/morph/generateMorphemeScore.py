@@ -22,7 +22,7 @@ def grab_word_mission():
 
 
 def calculateScore(row):
-    totalFreq = 0
+    totalLogFreq = 0
     wfdict = {}
     wfs = getWordFreqs(row[0])
     for wf in wfs:
@@ -35,13 +35,9 @@ def calculateScore(row):
                 wfdict[swf[2]] = swf[1]
 
     for k in wfdict.keys():
-        totalFreq += wfdict[k]
+        totalLogFreq += wfdict[k]
 
-    totalLogFreq = 0
-    if totalFreq > 0:
-        totalLogFreq = round(math.log(totalFreq),2)
-    print row[0],totalLogFreq,totalFreq
-    updateFreqLevel(row[0],totalLogFreq,totalFreq)
+    updateFreqLevel(row[0],totalLogFreq)
 
 def getMorphemes():
     sql = "select id,word_root from wiki_word_root"
@@ -50,19 +46,19 @@ def getMorphemes():
     return rows
 
 def getSimilarWordFreqs(wordId):
-    sql = "SELECT ww.id,ww.freq,ww.word FROM wiki_word_rela wwrr LEFT JOIN wiki_word ww ON wwrr.similar_word_id = ww.id WHERE word_id = "+str(wordId)+" AND has_translation = 1"
+    sql = "SELECT ww.id,ww.log_freq,ww.word FROM wiki_word_rela wwrr LEFT JOIN wiki_word ww ON wwrr.similar_word_id = ww.id WHERE word_id = "+str(wordId)+" AND has_translation = 1"
     cursor.execute(sql)
     rows = cursor.fetchall()
     return rows
 
 def getWordFreqs(wordRootId):
-    sql = "SELECT ww.id,ww.freq,ww.word  FROM wiki_word_root_rela wwrr LEFT JOIN wiki_word ww ON wwrr.word_id = ww.id WHERE word_root_id = "+str(wordRootId)+" AND has_translation = 1"
+    sql = "SELECT ww.id,ww.log_freq,ww.word  FROM wiki_word_root_rela wwrr LEFT JOIN wiki_word ww ON wwrr.word_id = ww.id WHERE word_root_id = "+str(wordRootId)+" AND has_translation = 1"
     cursor.execute(sql)
     rows = cursor.fetchall()
     return rows
 
-def updateFreqLevel(wordRootId,totalLogFreq,totalFreq):
-    sql = "update wiki_word_root set total_log_freq = " + str(totalLogFreq) + ",total_freq="+ str(totalFreq) +" where id=" + str(wordRootId)
+def updateFreqLevel(wordRootId,totalLogFreq):
+    sql = "update wiki_word_root set total_log_freq = " + str(totalLogFreq) +" where id=" + str(wordRootId)
     cursor.execute(sql)
 
 

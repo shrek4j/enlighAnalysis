@@ -67,7 +67,7 @@ for row in rows:
                 sql = "insert into wiki_word_rela (word_id,similar_word_id) values("+str(wId)+","+str(row1[0])+")"
                 cursor.execute(sql)
 
-db.commit();
+db.commit()
 cursor.close()
 db.close()
 
